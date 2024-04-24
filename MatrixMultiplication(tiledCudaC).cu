@@ -17,7 +17,6 @@ __global__ void tiled(int *a, int *b, int *c, int n, int m){
 
     int temp = 0;
 
-    // Loop over tiles of matrix A and B
     for(int i = 0; i < (m / TILE_SIZE); i++){
         // Load tile of matrix A into shared memory
         A[ty][tx] = a[row * m + i * TILE_SIZE + tx];
@@ -25,12 +24,10 @@ __global__ void tiled(int *a, int *b, int *c, int n, int m){
         B[ty][tx] = b[(i * TILE_SIZE + ty) * n + col];
         __syncthreads();
 
-        // Compute partial sum for the tile
+
         for(int j = 0; j < TILE_SIZE; j++){
             temp += A[ty][j] * B[j][tx];
         }
-
-        // Wait for all threads to finish using shared memory
         __syncthreads();
     }
 
